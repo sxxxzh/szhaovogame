@@ -3,22 +3,46 @@ define(['character', 'exceptions'], function(Character, Exceptions) {
 
     var Player = Character.extend({
         MAX_LEVEL: 10,
-    
+
         init: function(id, name, kind) {
             this._super(id, kind);
-        
+
             this.name = name;
-        
+
+            // Progression
+            this.level = 1;
+            this.xp = 0;
+            this.xpToNext = 100;
+
             // Renderer
-     		this.nameOffsetY = -10;
-        
+    		this.nameOffsetY = -10;
+
             // sprites
             this.spriteName = "clotharmor";
             this.weaponName = "sword1";
-        
+
             // modes
             this.isLootMoving = false;
             this.isSwitchingWeapon = true;
+        },
+
+        // XP progression
+        addXp: function(amount) {
+            if(!amount || amount <= 0) { return false; }
+            var leveled = false;
+            this.xp += amount;
+            while(this.level < this.MAX_LEVEL && this.xp >= this.xpToNext) {
+                this.xp -= this.xpToNext;
+                this.level += 1;
+                this.xpToNext = this.getXpRequirementFor(this.level);
+                leveled = true;
+            }
+            return leveled;
+        },
+
+        getXpRequirementFor: function(level) {
+            // Simple curve: grows by 50 each level starting from 100
+            return 100 + (Math.max(1, level) - 1) * 50;
         },
     
         loot: function(item) {

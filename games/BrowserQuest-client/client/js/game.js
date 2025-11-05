@@ -117,6 +117,10 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
             if(this.storage.hasAlreadyPlayed()) {
                 this.player.setSpriteName(this.storage.data.player.armor);
                 this.player.setWeaponName(this.storage.data.player.weapon);
+                // Restore progression (do not reset on death)
+                this.player.level = this.storage.getPlayerLevel();
+                this.player.xp = this.storage.getPlayerXp();
+                this.player.xpToNext = this.player.getXpRequirementFor(this.player.level);
             }
         
         	this.player.setSprite(this.sprites[this.player.getSpriteName()]);
@@ -1388,6 +1392,34 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                     if(kind === Types.Entities.BOSS) {
                         self.tryUnlockingAchievement("HERO");
                     }
+
+                    // Award experience based on mob kind
+                    var xpGain = (function() {
+                        switch(kind) {
+                            case Types.Entities.RAT: return 5;
+                            case Types.Entities.SPIDER: return 8;
+                            case Types.Entities.EYE: return 15;
+                            case Types.Entities.SKELETON: return 20;
+                            case Types.Entities.SKELETON2: return 30;
+                            case Types.Entities.DEATHKNIGHT: return 100;
+                            case Types.Entities.BOSS: return 200;
+                            default: return 10;
+                        }
+                    })();
+                    var leveled = self.player.addXp(xpGain);
+                    self.showNotification("+" + xpGain + " XP");
+                    // Persist progression
+                    if(self.storage) {
+                        self.storage.setPlayerXp(self.player.xp);
+                        if(leveled) {
+                            self.storage.setPlayerLevel(self.player.level);
+                        }
+                    }
+                    if(leveled) {
+                        self.audioManager.playSound("achievement");
+                        self.showNotification("Level up! Level " + self.player.level);
+                    }
+                    self.updateBars();
                 });
             
                 self.client.onPlayerChangeHealth(function(points, isRegen) {
@@ -2285,6 +2317,14 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
         onPlayerHealthChange: function(callback) {
             this.playerhp_callback = callback;
         },
+
+        onPlayerXpChange: function(callback) {
+            this.playerxp_callback = callback;
+        },
+
+        onPlayerLevelChange: function(callback) {
+            this.playerlevel_callback = callback;
+        },
     
         onPlayerHurt: function(callback) {
             this.playerhurt_callback = callback;
@@ -2320,8 +2360,16 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
         },
     
         updateBars: function() {
-            if(this.player && this.playerhp_callback) {
-                this.playerhp_callback(this.player.hitPoints, this.player.maxHitPoints);
+            if(this.player) {
+                if(this.playerhp_callback) {
+                    this.playerhp_callback(this.player.hitPoints, this.player.maxHitPoints);
+                }
+                if(this.playerxp_callback) {
+                    this.playerxp_callback(this.player.xp, this.player.xpToNext);
+                }
+                if(this.playerlevel_callback) {
+                    this.playerlevel_callback(this.player.level);
+                }
             }
         },
     

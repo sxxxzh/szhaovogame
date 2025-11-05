@@ -17,7 +17,10 @@ define(function() {
                     name: "",
                     weapon: "",
                     armor: "",
-                    image: ""
+                    image: "",
+                    // Progression
+                    level: 1,
+                    xp: 0
                 },
                 achievements: {
                     unlocked: [],
@@ -82,6 +85,25 @@ define(function() {
             this.setPlayerImage(img);
             this.setPlayerArmor(armor);
             this.setPlayerWeapon(weapon);
+        },
+
+        // Progression (XP/Level)
+        getPlayerLevel: function() {
+            return this.data.player.level || 1;
+        },
+
+        setPlayerLevel: function(level) {
+            this.data.player.level = level;
+            this.save();
+        },
+
+        getPlayerXp: function() {
+            return this.data.player.xp || 0;
+        },
+
+        setPlayerXp: function(xp) {
+            this.data.player.xp = xp;
+            this.save();
         },
     
         // Achievements

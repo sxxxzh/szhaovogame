@@ -279,6 +279,7 @@ define(['jquery', 'app'], function($, App) {
     		});
 	
             app.initHealthBar();
+            app.initXpBar();
 	
             $('#nameinput').attr('value', '');
             $('#chatbox').attr('value', '');

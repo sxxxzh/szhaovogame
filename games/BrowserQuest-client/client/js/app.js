@@ -152,7 +152,23 @@ define(['jquery', 'storage'], function($, Storage) {
         	    $("#hitpoints").css('width', barWidth + "px");
         	});
 
-        	this.game.onPlayerHurt(this.blinkHealthBar.bind(this));
+            this.game.onPlayerHurt(this.blinkHealthBar.bind(this));
+        },
+
+        initXpBar: function() {
+            var scale = this.game.renderer.getScaleFactor(),
+                xpMaxWidth = $("#healthbar").width() - (12 * scale);
+
+            this.game.onPlayerXpChange(function(xp, xpToNext) {
+                var safeMax = xpToNext > 0 ? xpToNext : 1;
+                var visibleXp = Math.max(0, Math.min(xp, safeMax));
+                var barWidth = Math.round((xpMaxWidth / safeMax) * visibleXp);
+                $("#xp").css('width', barWidth + "px");
+            });
+
+            this.game.onPlayerLevelChange(function(level) {
+                $("#level").text("Lv " + level);
+            });
         },
 
         blinkHealthBar: function() {
@@ -524,6 +540,7 @@ define(['jquery', 'storage'], function($, Storage) {
                 if(this.game.started) {
                     this.game.resize();
                     this.initHealthBar();
+                    this.initXpBar();
                     this.game.updateBars();
                 } else {
                     var newScale = this.game.renderer.getScaleFactor();

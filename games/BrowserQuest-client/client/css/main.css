@@ -149,9 +149,12 @@ footer, header, hgroup, menu, nav, section {
 
     #bar-container {background:url('../img/1/barsheet.png');image-rendering:-moz-crisp-edges;position:relative;width:100%;z-index:10;}
     #healthbar {background:url('../img/1/barsheet.png');image-rendering:-moz-crisp-edges;position:absolute;}
-	#hitpoints {background:#d83939;-moz-transition:.5s width ease;-webkit-transition:.5s width ease;-o-transition:.5s width ease;-ms-transition:.5s width ease;transition:.5s width ease;}
-    #hitpoints.white {-moz-animation:flash 0.5s linear 1;-webkit-animation:flash 0.5s linear 1;-o-animation:flash 0.5s linear 1;-ms-animation:flash 0.5s linear 1;animation:flash 0.5s linear 1;}
-	#hitpoints.invincible {-moz-animation:invincible 0.3s steps(3, end) alternate infinite;-webkit-animation:invincible 0.3s steps(3, end) alternate infinite;-o-animation:invincible 0.3s steps(3, end) alternate infinite;-ms-animation:invincible 0.3s steps(3, end) alternate infinite;}
+#hitpoints {background:#d83939;-moz-transition:.5s width ease;-webkit-transition:.5s width ease;-o-transition:.5s width ease;-ms-transition:.5s width ease;transition:.5s width ease;}
+#hitpoints.white {-moz-animation:flash 0.5s linear 1;-webkit-animation:flash 0.5s linear 1;-o-animation:flash 0.5s linear 1;-ms-animation:flash 0.5s linear 1;animation:flash 0.5s linear 1;}
+#hitpoints.invincible {-moz-animation:invincible 0.3s steps(3, end) alternate infinite;-webkit-animation:invincible 0.3s steps(3, end) alternate infinite;-o-animation:invincible 0.3s steps(3, end) alternate infinite;-ms-animation:invincible 0.3s steps(3, end) alternate infinite;}
+/* XP bar and level label */
+#xp {background:#2e86de;-moz-transition:.5s width ease;-webkit-transition:.5s width ease;-o-transition:.5s width ease;-ms-transition:.5s width ease;transition:.5s width ease;position:absolute;width:0px;z-index:11;}
+#level {position:absolute;font-family:'GraphicPixel';color:#e3e3e3;z-index:25;}
     
     #notifications {position:absolute;left:50%;text-align:center;font-family:'GraphicPixel';overflow:hidden;}
     #notifications div {position:absolute;-moz-transition:none;-webkit-transition:none;top:0;width:100%;}
@@ -496,7 +499,10 @@ footer, header, hgroup, menu, nav, section {
 	    #bar-container {height:51px;top:-3px;background-size:1440px;}
 
 		#healthbar {height:39px;background-position:0 -51px;width:306px;top:9px;background-size:1440px;z-index:20;}
-		#hitpoints {width:0px;height:33px;top:12px;left:33px;z-index:10;position:absolute;}
+#hitpoints {width:0px;height:33px;top:12px;left:33px;z-index:10;position:absolute;}
+/* Large scale xp bar positioning */
+#xp {height:4px;top:45px;left:33px;}
+#level {top:10px;left:8px;font-size:14px;}
 
         #armor, #weapon {width:48px;height:48px;position:absolute;background-size:288px;background-position:-96px;}
         #weapon {left:312px;top:3px;background-size:288px;}
@@ -656,7 +662,10 @@ footer, header, hgroup, menu, nav, section {
 		#bar-container {height:34px;top:-2px;background-size:960px;}
 
 		#healthbar {height:26px;background-position:0 -34px;width:204px;top:6px;background-size:960px;z-index:20;}
-		#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
+#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
+/* Medium scale xp bar positioning */
+#xp {height:3px;top:30px;left:22px;}
+#level {top:7px;left:6px;font-size:12px;}
 
         #armor, #weapon {width:32px;height:32px;position:absolute;background-size:192px;background-position:-64px;}
         #weapon {left:208px;top:2px;}
@@ -817,7 +826,10 @@ footer, header, hgroup, menu, nav, section {
 		#bar-container {height:34px;top:-2px;background-size:960px;}
 
 		#healthbar {height:26px;background-position:0 -34px;width:204px;top:6px;background-size:960px;z-index:20;}
-		#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
+#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
+/* Medium scale (duplicate) */
+#xp {height:3px;top:30px;left:22px;}
+#level {top:7px;left:6px;font-size:12px;}
 
         #armor, #weapon {width:32px;height:32px;position:absolute;background-size:192px;background-position:-64px;}
         #weapon {left:208px;top:2px;}
@@ -976,7 +988,10 @@ footer, header, hgroup, menu, nav, section {
 	    #bar-container {height:17px;top:-1px;background-size:480px;}
 
 		#healthbar {height:13px;background-position:0 -17px;width:102px;top:3px;background-size:480px;z-index:20;}
-		#hitpoints {width:0px;height:11px;top:4px;left:11px;z-index:10;position:absolute;}
+#hitpoints {width:0px;height:11px;top:4px;left:11px;z-index:10;position:absolute;}
+/* Small scale xp bar positioning */
+#xp {height:2px;top:15px;left:11px;}
+#level {top:3px;left:4px;font-size:8px;}
 
         #armor, #weapon {width:16px;height:16px;position:absolute;background-size:96px;background-position:-32px;}
         #weapon {left:104px;top:1px;}
@@ -1136,7 +1151,10 @@ footer, header, hgroup, menu, nav, section {
 		#bar-container {height:34px;top:-2px;background-size:960px;background-position:0 -96px;}
 
 		#healthbar {height:26px;background-position:0 -34px;width:204px;top:6px;background-size:960px;z-index:20;}
-		#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
+#hitpoints {width:0px;height:22px;top:8px;left:22px;z-index:10;position:absolute;}
+/* Medium scale (alt) */
+#xp {height:3px;top:30px;left:22px;}
+#level {top:7px;left:6px;font-size:12px;}
 
         #armor, #weapon {width:32px;height:32px;position:absolute;background-size:192px;background-position:-64px;}
         #weapon {left:208px;top:2px;}
