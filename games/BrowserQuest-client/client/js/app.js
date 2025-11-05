@@ -1,5 +1,5 @@
 
-define(['jquery', 'storage'], function($, Storage) {
+define(['jquery', 'storage', 'cloudstorage'], function($, Storage, CloudStorage) {
 
     var App = Class.extend({
         init: function() {
@@ -8,7 +8,8 @@ define(['jquery', 'storage'], function($, Storage) {
             this.previousState = null;
             this.isParchmentReady = true;
             this.ready = false;
-            this.storage = new Storage();
+            this.cloudStorage = new CloudStorage({ gameKey: 'browserquest' });
+            this.storage = new Storage(this.cloudStorage);
             this.watchNameInputInterval = setInterval(this.toggleButton.bind(this), 100);
             this.$playButton = $('.play'),
             this.$playDiv = $('.play div');

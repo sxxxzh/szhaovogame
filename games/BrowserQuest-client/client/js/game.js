@@ -122,6 +122,20 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 this.player.xp = this.storage.getPlayerXp();
                 this.player.xpToNext = this.player.getXpRequirementFor(this.player.level);
             }
+            // Try restoring from cloud if available (non-blocking)
+            var self = this;
+            if(this.storage && this.storage.cloud && this.storage.cloud.isLoggedIn && this.storage.cloud.isLoggedIn()) {
+                this.storage.syncFromCloud().then(function(synced) {
+                    if(synced) {
+                        self.player.setSpriteName(self.storage.data.player.armor);
+                        self.player.setWeaponName(self.storage.data.player.weapon);
+                        self.player.level = self.storage.getPlayerLevel();
+                        self.player.xp = self.storage.getPlayerXp();
+                        self.player.xpToNext = self.player.getXpRequirementFor(self.player.level);
+                        self.updateBars();
+                    }
+                });
+            }
         
         	this.player.setSprite(this.sprites[this.player.getSpriteName()]);
         	this.player.idle();

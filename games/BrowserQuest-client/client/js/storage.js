@@ -2,7 +2,8 @@
 define(function() {
 
     var Storage = Class.extend({
-        init: function() {
+        init: function(cloud) {
+            this.cloud = cloud || null;
             if(this.hasLocalStorage() && localStorage.data) {
                 this.data = JSON.parse(localStorage.data);
             } else {
@@ -41,6 +42,9 @@ define(function() {
             if(this.hasLocalStorage()) {
                 localStorage.data = JSON.stringify(this.data);
             }
+            if(this.cloud && this.cloud.isLoggedIn) {
+                try { this.cloud.saveState(this.data); } catch(e) {}
+            }
         },
     
         clear: function() {
@@ -48,6 +52,39 @@ define(function() {
                 localStorage.data = "";
                 this.resetData();
             }
+        },
+
+        // Cloud sync helpers
+        syncFromCloud: function() {
+            var self = this;
+            if(!this.cloud || !this.cloud.isLoggedIn || !this.cloud.isLoggedIn()) {
+                return Promise.resolve(false);
+            }
+            return this.cloud.loadState().then(function(state) {
+                if(state && typeof state === 'object') {
+                    // Shallow merge into local data schema
+                    if(state.player) {
+                        self.data.player.name = state.player.name || self.data.player.name;
+                        self.data.player.weapon = state.player.weapon || self.data.player.weapon;
+                        self.data.player.armor = state.player.armor || self.data.player.armor;
+                        self.data.player.image = state.player.image || self.data.player.image;
+                        if(typeof state.player.level === 'number') self.data.player.level = state.player.level;
+                        if(typeof state.player.xp === 'number') self.data.player.xp = state.player.xp;
+                    }
+                    if(state.achievements) {
+                        self.data.achievements.unlocked = state.achievements.unlocked || self.data.achievements.unlocked;
+                        self.data.achievements.ratCount = state.achievements.ratCount || self.data.achievements.ratCount;
+                        self.data.achievements.skeletonCount = state.achievements.skeletonCount || self.data.achievements.skeletonCount;
+                        self.data.achievements.totalKills = state.achievements.totalKills || self.data.achievements.totalKills;
+                        self.data.achievements.totalDmg = state.achievements.totalDmg || self.data.achievements.totalDmg;
+                        self.data.achievements.totalRevives = state.achievements.totalRevives || self.data.achievements.totalRevives;
+                    }
+                    self.data.hasAlreadyPlayed = true;
+                    self.save();
+                    return true;
+                }
+                return false;
+            });
         },
     
         // Player
