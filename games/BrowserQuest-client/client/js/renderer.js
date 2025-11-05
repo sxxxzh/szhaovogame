@@ -554,7 +554,8 @@ function(Camera, Item, Character, Player, Timer) {
         drawEntityName: function(entity) {
             this.context.save();
             if(entity.name && entity instanceof Player) {
-                var color = (entity.id === this.game.playerId) ? "#fcda5c" : "white";
+                // 优先使用服务器指定的名称颜色，其次使用本地/默认逻辑
+                var color = entity.nameColor || ((entity.id === this.game.playerId) ? "#fcda5c" : "white");
                 this.drawText(entity.name,
                               (entity.x + 8) * this.scale,
                               (entity.y + entity.nameOffsetY) * this.scale,

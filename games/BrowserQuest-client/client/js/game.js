@@ -765,13 +765,16 @@ function(InfoManager, BubbleManager, Renderer, Map, Animation, Sprite, AnimatedT
                 }
             });
         
-            this.client.onWelcome(function(id, name, x, y, hp) {
+            this.client.onWelcome(function(id, name, x, y, hp, color) {
                 log.info("Received player ID from server : "+ id);
                 self.player.id = id;
                 self.playerId = id;
                 // Always accept name received from the server which will
                 // sanitize and shorten names exceeding the allowed length.
                 self.player.name = name;
+                if(typeof color !== 'undefined') {
+                    self.player.nameColor = color;
+                }
                 self.player.setGridPosition(x, y);
                 self.player.setMaxHitPoints(hp);
             

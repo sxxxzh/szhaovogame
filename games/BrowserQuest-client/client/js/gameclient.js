@@ -183,10 +183,16 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
                 name = data[2],
                 x = data[3],
                 y = data[4],
-                hp = data[5];
+                hp = data[5],
+                color = data[6];
         
             if(this.welcome_callback) {
-                this.welcome_callback(id, name, x, y, hp);
+                // 兼容旧协议：如果未提供颜色，则不传递
+                if(typeof color !== 'undefined') {
+                    this.welcome_callback(id, name, x, y, hp, color);
+                } else {
+                    this.welcome_callback(id, name, x, y, hp);
+                }
             }
         },
     
@@ -237,15 +243,19 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
                     this.spawn_chest_callback(item, x, y);
                 }
             } else {
-                var name, orientation, target, weapon, armor;
+                var name, orientation, target, weapon, armor, nameColor;
             
                 if(Types.isPlayer(kind)) {
                     name = data[5];
                     orientation = data[6];
                     armor = data[7];
                     weapon = data[8];
+                    // data[9] 可能被旧字段占用（例如 target），颜色放在 data[10]
                     if(data.length > 9) {
                         target = data[9];
+                    }
+                    if(data.length > 10) {
+                        nameColor = data[10];
                     }
                 }
                 else if(Types.isMob(kind)) {
@@ -260,6 +270,9 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
                 if(character instanceof Player) {
                     character.weaponName = Types.getKindAsString(weapon);
                     character.spriteName = Types.getKindAsString(armor);
+                    if(typeof nameColor !== 'undefined') {
+                        character.nameColor = nameColor;
+                    }
                 }
             
                 if(this.spawn_character_callback) {
@@ -482,10 +495,34 @@ define(['player', 'entityfactory', 'lib/bison'], function(Player, EntityFactory,
         },
 
         sendHello: function(player) {
-            this.sendMessage([Types.Messages.HELLO,
-                              player.name,
-                              Types.getKindFromString(player.getSpriteName()),
-                              Types.getKindFromString(player.getWeaponName())]);
+            var token = null;
+            try {
+                // 从父页面读取登录 token（同域情况下）
+                if(window.parent && window.parent.localStorage) {
+                    token = window.parent.localStorage.getItem('auth_token');
+                }
+            } catch(e) {
+                token = null;
+            }
+            // 读取失败或不在 iframe 时，回退到当前窗口的 localStorage
+            if(!token) {
+                try {
+                    if(window.localStorage) {
+                        token = window.localStorage.getItem('auth_token');
+                    }
+                } catch(e2) {
+                    token = null;
+                }
+            }
+            var payload = [Types.Messages.HELLO,
+                           player.name,
+                           Types.getKindFromString(player.getSpriteName()),
+                           Types.getKindFromString(player.getWeaponName())];
+            if(token) {
+                // 以向后兼容的方式附加 token
+                payload.push(token);
+            }
+            this.sendMessage(payload);
         },
 
         sendMove: function(x, y) {
