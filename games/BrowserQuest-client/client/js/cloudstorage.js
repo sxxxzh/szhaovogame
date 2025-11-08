@@ -3,7 +3,7 @@ define(function() {
     var CloudStorage = Class.extend({
         init: function(options) {
             options = options || {};
-            this.apiBase = options.apiBase || 'https://gameapi.szhaovo.cn';
+            this.apiBase = options.apiBase || 'https://wsgame.szhaovo.cn';
             this.gameKey = options.gameKey || 'browserquest';
             this.TOKEN_KEY = 'auth_token';
         },
